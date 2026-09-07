@@ -1,6 +1,7 @@
 package com.example.customerapi.controller;
 import com.example.customerapi.model.Customer;
 import com.example.customerapi.service.CustomerService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,7 +18,7 @@ public class CustomerController {
     }
     @PostMapping("/customers")
     public List<Customer> createCustomers(
-            @RequestBody List<Customer> customers){
+            @RequestBody List<@Valid Customer> customers){
         return customerService.saveCustomers(customers);
     }
     @GetMapping("/customers/{id}")
