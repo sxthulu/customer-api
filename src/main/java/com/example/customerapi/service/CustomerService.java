@@ -1,6 +1,7 @@
 package com.example.customerapi.service;
 
 
+import com.example.customerapi.exception.CustomerNotFoundException;
 import com.example.customerapi.model.Customer;
 import com.example.customerapi.repository.CustomerRepository;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,7 @@ public class CustomerService {
         return customerRepository.saveAll(customers);
     }
     public Customer getCustomerById(Long id){
-        return customerRepository.findById(id).orElse(null);
+        return customerRepository.findById(id).orElseThrow(() -> new CustomerNotFoundException(id));
     }
     public void deleteCustomer(Long id){
         customerRepository.deleteById(id);
