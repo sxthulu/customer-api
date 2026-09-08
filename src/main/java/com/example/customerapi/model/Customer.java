@@ -12,18 +12,11 @@ public class Customer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "First name is required.")
     private String firstName;
-
-    @NotBlank(message = "Last name is required.")
     private String lastName;
-
-    @NotBlank(message = "Email is required.")
-    @Email(message = "Email must be valid.")
     private String email;
 
-    public Customer(){
-            }
+    public Customer(){}
     public Customer(Long id, String firstName, String lastName, String email) {
         this.id = id;
         this.firstName = firstName;
