@@ -1,6 +1,8 @@
 package com.example.customerapi.service;
 
 
+import com.example.customerapi.dto.CustomerRequest;
+import com.example.customerapi.dto.CustomerResponse;
 import com.example.customerapi.exception.CustomerNotFoundException;
 import com.example.customerapi.model.Customer;
 import com.example.customerapi.repository.CustomerRepository;
@@ -13,26 +15,60 @@ public class CustomerService {
     public CustomerService(CustomerRepository customerRepository){
         this.customerRepository = customerRepository;
     }
-    public List<Customer> getCustomers(){
-        return customerRepository.findAll();
+    public List<CustomerResponse> getCustomers(){
+        return customerRepository.findAll()
+                .stream()
+                .map(customer -> new CustomerResponse(
+                        customer.getId(),
+                        customer.getFirstName(),
+                        customer.getLastName(),
+                        customer.getEmail()
+                ))
+                .toList();
     }
-    public List<Customer> saveCustomers(List<Customer> customers){
-        return customerRepository.saveAll(customers);
+    public CustomerResponse saveCustomer (CustomerRequest request){
+        Customer customer = new Customer();
+        customer.setFirstName(request.getFirstName());
+        customer.setLastName(request.getLastName());
+        customer.setEmail(request.getEmail());
+
+        Customer savedCustomer = customerRepository.save(customer);
+
+        return new CustomerResponse(
+                savedCustomer.getId(),
+                savedCustomer.getLastName(),
+                savedCustomer.getLastName(),
+                savedCustomer.getEmail()
+        );
     }
-    public Customer getCustomerById(Long id){
-        return customerRepository.findById(id).orElseThrow(() -> new CustomerNotFoundException(id));
+    public CustomerResponse getCustomerById(Long id){
+        Customer customer = customerRepository.findById(id).orElseThrow(() -> new CustomerNotFoundException(id));
+
+        return new CustomerResponse(
+                customer.getId(),
+                customer.getFirstName(),
+                customer.getLastName(),
+                customer.getEmail()
+        );
     }
     public void deleteCustomer(Long id){
-        customerRepository.deleteById(id);
+        Customer customer = customerRepository.findById(id)
+                .orElseThrow(() -> new CustomerNotFoundException(id));
+        customerRepository.delete(customer);
     }
-    public Customer updateCustomer(Long id, Customer customer){
-        Customer existingCustomer = customerRepository.findById(id).orElse(null);
-        if (existingCustomer == null){
-            return null;
-        }
-        existingCustomer.setFirstName(customer.getFirstName());
-        existingCustomer.setLastName(customer.getLastName());
-        existingCustomer.setEmail(customer.getEmail());
-        return customerRepository.save(existingCustomer);
+
+    public CustomerResponse updateCustomer(Long id, CustomerRequest request){
+        Customer customer = customerRepository.findById(id).orElseThrow(() -> new CustomerNotFoundException(id));
+        customer.setFirstName(request.getFirstName());
+        customer.setLastName(request.getLastName());
+        customer.setEmail(request.getEmail());
+        Customer updateCustomer = customerRepository.save(customer);
+
+        return new CustomerResponse(
+                updateCustomer.getId(),
+                updateCustomer.getFirstName(),
+                updateCustomer.getLastName(),
+                updateCustomer.getEmail()
+        );
     }
 }

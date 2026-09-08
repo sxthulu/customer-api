@@ -1,4 +1,6 @@
 package com.example.customerapi.controller;
+import com.example.customerapi.dto.CustomerRequest;
+import com.example.customerapi.dto.CustomerResponse;
 import com.example.customerapi.model.Customer;
 import com.example.customerapi.service.CustomerService;
 import jakarta.validation.Valid;
@@ -13,16 +15,16 @@ public class CustomerController {
         this.customerService = customerService;
     }
     @GetMapping("/customers")
-    public List<Customer> getCustomer(){
+    public List<CustomerResponse> getCustomers(){
         return customerService.getCustomers();
     }
     @PostMapping("/customers")
-    public List<Customer> createCustomers(
-            @RequestBody List<@Valid Customer> customers){
-        return customerService.saveCustomers(customers);
+    public CustomerResponse createCustomers(
+            @Valid @RequestBody CustomerRequest request){
+        return customerService.saveCustomer(request);
     }
     @GetMapping("/customers/{id}")
-    public Customer getCustomerById(
+    public CustomerResponse getCustomerById(
             @PathVariable Long id){
         return customerService.getCustomerById(id);
     }
@@ -32,9 +34,9 @@ public class CustomerController {
         customerService.deleteCustomer(id);
     }
     @PutMapping("/customers/{id}")
-    public Customer updateCustomer(
+    public CustomerResponse updateCustomer(
             @PathVariable Long id,
-            @RequestBody Customer customer){
-        return customerService.updateCustomer(id, customer);
+            @Valid @RequestBody CustomerRequest request){
+        return customerService.updateCustomer(id, request);
     }
 }
