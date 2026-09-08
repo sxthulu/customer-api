@@ -36,7 +36,7 @@ public class CustomerService {
 
         return new CustomerResponse(
                 savedCustomer.getId(),
-                savedCustomer.getLastName(),
+                savedCustomer.getFirstName(),
                 savedCustomer.getLastName(),
                 savedCustomer.getEmail()
         );
