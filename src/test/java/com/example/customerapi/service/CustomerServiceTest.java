@@ -9,9 +9,11 @@ import com.example.customerapi.repository.CustomerRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -74,5 +76,14 @@ public class CustomerServiceTest {
         assertEquals("Adriel", response.getFirstName());
         assertEquals("Rai", response.getLastName());
         assertEquals("maile2AD@mail.com", response.getEmail());
+
+        ArgumentCaptor<Customer> customerCaptor =
+                ArgumentCaptor.forClass(Customer.class);
+        verify(customerRepository).save(customerCaptor.capture());
+        Customer capturedCustomer = customerCaptor.getValue();
+        assertEquals("Adriel", capturedCustomer.getFirstName());
+        assertEquals("Rai", capturedCustomer.getLastName());
+        assertEquals("maile2AD@mail.com", capturedCustomer.getEmail());
     }
+
 }
