@@ -23,9 +23,13 @@ Run
 Start PostgreSQL, then run the Spring Boot application.
 
 
-API:
+End API:
 
+dev and prod
 http://localhost:8080
+
+test: 
+http://localhost:8081
 
 @Test
 CustomerService
