@@ -1,12 +1,20 @@
 package com.example.customerapi.model;
 
 
+import ch.qos.logback.core.joran.action.AppenderRefAction;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "customers")
+@Setter
+@Getter
+
 public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,35 +24,29 @@ public class Customer {
     private String lastName;
     private String email;
 
+    @Column(updatable = false, nullable = false)
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+
     public Customer(){}
+    @PrePersist
+    public void beforeInsert(){
+        LocalDateTime now = LocalDateTime.now();
+        this.createdAt = now;
+        this.updatedAt = now;
+    }
+
+    @PreUpdate
+    public void beforeUpdate(){
+        this.updatedAt = LocalDateTime.now();
+    }
+
+
+
     public Customer(Long id, String firstName, String lastName, String email) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.email = email;
-    }
-    public Long getId(){
-        return id;
-    }
-    public String getFirstName(){
-        return firstName;
-    }
-    public String getLastName(){
-        return lastName;
-    }
-    public String getEmail(){
-        return email;
-    }
-    public void setId(Long id) {
-        this.id = id;
-    }
-    public void setFirstName(String firstName){
-        this.firstName = firstName;
-        }
-    public void setLastName(String lastName){
-        this.lastName = lastName;
-        }
-    public void setEmail(String email){
         this.email = email;
     }
 }

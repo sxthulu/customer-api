@@ -1,10 +1,20 @@
 package com.example.customerapi.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
+import java.time.LocalDateTime;
+
+@Setter
+@Getter
+
 public class CustomerResponse {
     private Long id;
     private String firstName;
     private String lastName;
     private String email;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     public CustomerResponse(){
     }
@@ -13,26 +23,13 @@ public class CustomerResponse {
             Long id,
             String firstName,
             String lastName,
-            String email) {
+            String email, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
-    public Long getId() {
-        return id;
     }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-}

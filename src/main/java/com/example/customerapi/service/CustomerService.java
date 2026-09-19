@@ -22,10 +22,13 @@ public class CustomerService {
                         customer.getId(),
                         customer.getFirstName(),
                         customer.getLastName(),
-                        customer.getEmail()
+                        maskEmail(customer.getEmail()),
+                        customer.getCreatedAt(),
+                        customer.getUpdatedAt()
                 ))
                 .toList();
     }
+
     public CustomerResponse saveCustomer (CustomerRequest request){
         Customer customer = new Customer();
         customer.setFirstName(request.getFirstName());
@@ -38,8 +41,10 @@ public class CustomerService {
                 savedCustomer.getId(),
                 savedCustomer.getFirstName(),
                 savedCustomer.getLastName(),
-                savedCustomer.getEmail()
-        );
+                maskEmail(savedCustomer.getEmail()),
+                savedCustomer.getCreatedAt(),
+                savedCustomer.getUpdatedAt()
+                );
     }
     public CustomerResponse getCustomerById(Long id){
         Customer customer = customerRepository.findById(id).orElseThrow(() -> new CustomerNotFoundException(id));
@@ -48,8 +53,10 @@ public class CustomerService {
                 customer.getId(),
                 customer.getFirstName(),
                 customer.getLastName(),
-                customer.getEmail()
-        );
+                maskEmail(customer.getEmail()),
+                customer.getCreatedAt(),
+                customer.getUpdatedAt()
+                );
     }
     public void deleteCustomer(Long id){
         Customer customer = customerRepository.findById(id)
@@ -68,7 +75,28 @@ public class CustomerService {
                 updateCustomer.getId(),
                 updateCustomer.getFirstName(),
                 updateCustomer.getLastName(),
-                updateCustomer.getEmail()
+                maskEmail(updateCustomer.getEmail()),
+                updateCustomer.getCreatedAt(),
+                updateCustomer.getUpdatedAt()
         );
+    }
+    private String maskEmail(String email){
+        if (email == null || !email.contains("@")){
+            return email;
+        }
+
+        String[] parts = email.split("@",2);
+        String username = parts[0];
+        String domain = parts[1];
+
+        if (username.length() <= 2){
+            return "*".repeat(username.length())+ "@" + domain;
+        }
+
+        return username.charAt(0)
+                + "*".repeat(username.length() - 2)
+                + username.charAt(username.length() -1)
+                + "@"
+                + domain;
     }
 }
