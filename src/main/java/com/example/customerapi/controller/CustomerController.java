@@ -1,4 +1,5 @@
 package com.example.customerapi.controller;
+import com.example.customerapi.dto.CustomerPatchReq;
 import com.example.customerapi.dto.CustomerRequest;
 import com.example.customerapi.dto.CustomerResponse;
 import com.example.customerapi.model.Customer;
@@ -38,5 +39,12 @@ public class CustomerController {
             @PathVariable Long id,
             @Valid @RequestBody CustomerRequest request){
         return customerService.updateCustomer(id, request);
+    }
+    @PatchMapping("/customers/{id}")
+    public CustomerResponse patchCustomer(
+            @PathVariable Long id,
+            @Valid @RequestBody CustomerPatchReq request
+            ){
+        return customerService.patchCustomer(id, request);
     }
 }

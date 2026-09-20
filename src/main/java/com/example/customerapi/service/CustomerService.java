@@ -1,6 +1,7 @@
 package com.example.customerapi.service;
 
 
+import com.example.customerapi.dto.CustomerPatchReq;
 import com.example.customerapi.dto.CustomerRequest;
 import com.example.customerapi.dto.CustomerResponse;
 import com.example.customerapi.exception.CustomerNotFoundException;
@@ -18,18 +19,11 @@ public class CustomerService {
     public List<CustomerResponse> getCustomers(){
         return customerRepository.findAll()
                 .stream()
-                .map(customer -> new CustomerResponse(
-                        customer.getId(),
-                        customer.getFirstName(),
-                        customer.getLastName(),
-                        maskEmail(customer.getEmail()),
-                        customer.getCreatedAt(),
-                        customer.getUpdatedAt()
-                ))
+                .map(this::toMapResponse)
                 .toList();
     }
 
-    public CustomerResponse saveCustomer (CustomerRequest request){
+    public CustomerResponse saveCustomer (CustomerRequest request) {
         Customer customer = new Customer();
         customer.setFirstName(request.getFirstName());
         customer.setLastName(request.getLastName());
@@ -37,26 +31,12 @@ public class CustomerService {
 
         Customer savedCustomer = customerRepository.save(customer);
 
-        return new CustomerResponse(
-                savedCustomer.getId(),
-                savedCustomer.getFirstName(),
-                savedCustomer.getLastName(),
-                maskEmail(savedCustomer.getEmail()),
-                savedCustomer.getCreatedAt(),
-                savedCustomer.getUpdatedAt()
-                );
+        return toMapResponse(savedCustomer);
     }
     public CustomerResponse getCustomerById(Long id){
         Customer customer = customerRepository.findById(id).orElseThrow(() -> new CustomerNotFoundException(id));
 
-        return new CustomerResponse(
-                customer.getId(),
-                customer.getFirstName(),
-                customer.getLastName(),
-                maskEmail(customer.getEmail()),
-                customer.getCreatedAt(),
-                customer.getUpdatedAt()
-                );
+        return toMapResponse(customer);
     }
     public void deleteCustomer(Long id){
         Customer customer = customerRepository.findById(id)
@@ -69,17 +49,32 @@ public class CustomerService {
         customer.setFirstName(request.getFirstName());
         customer.setLastName(request.getLastName());
         customer.setEmail(request.getEmail());
-        Customer updateCustomer = customerRepository.save(customer);
 
-        return new CustomerResponse(
-                updateCustomer.getId(),
-                updateCustomer.getFirstName(),
-                updateCustomer.getLastName(),
-                maskEmail(updateCustomer.getEmail()),
-                updateCustomer.getCreatedAt(),
-                updateCustomer.getUpdatedAt()
-        );
+        Customer updatedCustomer = customerRepository.save(customer);
+
+        return toMapResponse(updatedCustomer);
     }
+    public CustomerResponse patchCustomer(
+            Long id,
+            CustomerPatchReq request
+    ) {
+        Customer customer = customerRepository.findById(id)
+                .orElseThrow(() -> new CustomerNotFoundException(id));
+
+        if (request.getFirstName() != null) {
+            customer.setFirstName(request.getFirstName());
+        }
+        if (request.getLastName() != null) {
+            customer.setLastName(request.getLastName());
+        }
+        if (request.getEmail() != null) {
+            customer.setEmail(request.getEmail());
+        }
+        Customer updatedCustomer = customerRepository.save(customer);
+
+        return toMapResponse(updatedCustomer);
+    }
+
     private String maskEmail(String email){
         if (email == null || !email.contains("@")){
             return email;
@@ -98,5 +93,15 @@ public class CustomerService {
                 + username.charAt(username.length() -1)
                 + "@"
                 + domain;
+    }
+    private CustomerResponse toMapResponse(Customer customer){
+        return new CustomerResponse(
+                customer.getId(),
+                customer.getFirstName(),
+                customer.getFirstName(),
+                customer.getEmail(),
+                customer.getCreatedAt(),
+                customer.getUpdatedAt()
+        );
     }
 }
