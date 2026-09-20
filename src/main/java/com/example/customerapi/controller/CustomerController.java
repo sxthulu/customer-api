@@ -5,6 +5,7 @@ import com.example.customerapi.dto.CustomerResponse;
 import com.example.customerapi.model.Customer;
 import com.example.customerapi.service.CustomerService;
 import jakarta.validation.Valid;
+import lombok.Getter;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -46,5 +47,10 @@ public class CustomerController {
             @Valid @RequestBody CustomerPatchReq request
             ){
         return customerService.patchCustomer(id, request);
+    }
+    @GetMapping("/customers/search")
+    public List<CustomerResponse> searchCustomers(
+            @RequestParam String name){
+        return customerService.searchCustomers(name);
     }
 }

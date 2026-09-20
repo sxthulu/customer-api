@@ -109,4 +109,11 @@ public class CustomerService {
                 customer.getUpdatedAt()
         );
     }
+    public List<CustomerResponse> searchCustomers(String name){
+        return customerRepository
+                .findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(name, name)
+                .stream()
+                .map(this::toMapResponse)
+                .toList();
+    }
 }
