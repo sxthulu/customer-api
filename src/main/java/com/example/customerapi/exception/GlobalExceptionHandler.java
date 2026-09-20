@@ -2,6 +2,7 @@ package com.example.customerapi.exception;
 
 import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.method.ParameterErrors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
@@ -18,6 +19,19 @@ public class GlobalExceptionHandler {
                 HttpStatus.NOT_FOUND.value(),
                 ex.getMessage()
         );
+    }
+    @ExceptionHandler(DuplicateEmailException.class)
+    public ResponseEntity<Map<String, Object>> handleDuplicateEmail(
+            DuplicateEmailException exception
+    ){
+        Map<String, Object> error = new HashMap<>();
+
+        error.put("status", HttpStatus.CONFLICT.value());
+        error.put("message", exception.getMessage());
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(error);
     }
     @ExceptionHandler(HandlerMethodValidationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)

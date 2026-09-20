@@ -5,6 +5,7 @@ import com.example.customerapi.dto.CustomerPatchReq;
 import com.example.customerapi.dto.CustomerRequest;
 import com.example.customerapi.dto.CustomerResponse;
 import com.example.customerapi.exception.CustomerNotFoundException;
+import com.example.customerapi.exception.DuplicateEmailException;
 import com.example.customerapi.model.Customer;
 import com.example.customerapi.repository.CustomerRepository;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,10 @@ public class CustomerService {
     }
 
     public CustomerResponse saveCustomer (CustomerRequest request) {
+
+        if (customerRepository.existsByEmailIgnoreCase(request.getEmail())){
+            throw new DuplicateEmailException(request.getEmail());
+        }
         Customer customer = new Customer();
         customer.setFirstName(request.getFirstName());
         customer.setLastName(request.getLastName());
@@ -98,7 +103,7 @@ public class CustomerService {
         return new CustomerResponse(
                 customer.getId(),
                 customer.getFirstName(),
-                customer.getFirstName(),
+                customer.getLastName(),
                 customer.getEmail(),
                 customer.getCreatedAt(),
                 customer.getUpdatedAt()
