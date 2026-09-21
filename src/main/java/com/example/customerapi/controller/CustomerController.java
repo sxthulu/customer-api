@@ -6,6 +6,8 @@ import com.example.customerapi.model.Customer;
 import com.example.customerapi.service.CustomerService;
 import jakarta.validation.Valid;
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,31 +18,42 @@ public class CustomerController {
     public CustomerController(CustomerService customerService){
         this.customerService = customerService;
     }
+
     @GetMapping("/customers")
     public List<CustomerResponse> getCustomers(){
         return customerService.getCustomers();
     }
+
     @PostMapping("/customers")
-    public CustomerResponse createCustomers(
+    public ResponseEntity<CustomerResponse> saveCustomer(
             @Valid @RequestBody CustomerRequest request){
-        return customerService.saveCustomer(request);
+        CustomerResponse savedCustomer = customerService.saveCustomer(request);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(savedCustomer);
+
     }
+
     @GetMapping("/customers/{id}")
     public CustomerResponse getCustomerById(
             @PathVariable Long id){
         return customerService.getCustomerById(id);
     }
+
     @DeleteMapping("/customers/{id}")
     public void deleteCustomer(
             @PathVariable Long id){
         customerService.deleteCustomer(id);
     }
+
     @PutMapping("/customers/{id}")
     public CustomerResponse updateCustomer(
             @PathVariable Long id,
             @Valid @RequestBody CustomerRequest request){
         return customerService.updateCustomer(id, request);
     }
+
     @PatchMapping("/customers/{id}")
     public CustomerResponse patchCustomer(
             @PathVariable Long id,
@@ -48,6 +61,7 @@ public class CustomerController {
             ){
         return customerService.patchCustomer(id, request);
     }
+
     @GetMapping("/customers/search")
     public List<CustomerResponse> searchCustomers(
             @RequestParam String name){

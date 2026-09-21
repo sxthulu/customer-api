@@ -75,6 +75,17 @@ public class CustomerService {
         if (request.getEmail() != null) {
             customer.setEmail(request.getEmail());
         }
+
+        if (request.getEmail() != null){
+            boolean emailAlreadyExists =
+                    customerRepository.existsByEmailIgnoreCaseAndIdNot(
+                            request.getEmail(),
+                            id
+                    );
+            if (emailAlreadyExists){
+                throw new DuplicateEmailException(request.getEmail());
+            }
+        }
         Customer updatedCustomer = customerRepository.save(customer);
 
         return toMapResponse(updatedCustomer);
